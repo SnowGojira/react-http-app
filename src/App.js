@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import http from "./services/httpServices";
-
-const apiURL = "https://jsonplaceholder.typicode.com/posts";
+import config from "./config.json";
 
 class App extends Component {
   state = {
@@ -10,13 +9,13 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    const { data: posts } = await http.get(apiURL);
+    const { data: posts } = await http.get(config.apiURL);
     this.setState({ posts });
   }
 
   handleAdd = async () => {
     const obj = { title: "a", body: "b" };
-    const { data: post } = await http.post(apiURL, obj);
+    const { data: post } = await http.post(config.apiURL, obj);
 
     const posts = [post, ...this.state.posts];
     this.setState({ posts });
@@ -24,7 +23,7 @@ class App extends Component {
 
   handleUpdate = async (post) => {
     post.title = "UPDATED!";
-    await http.put(`${apiURL}/${post.id}`, post);
+    await http.put(`${config.apiURL}/${post.id}`, post);
 
     const posts = [...this.state.posts];
     const index = posts.indexOf(post);
@@ -39,7 +38,7 @@ class App extends Component {
     this.setState({ posts });
 
     try {
-      await http.delete(`${apiURL}/${post.id}`);
+      await http.delete(`${config.apiURL}/${post.id}`);
     } catch (err) {
       if (err.response && err.response.status === 404)
         alert("you have already deleted it!");
