@@ -6,37 +6,45 @@ const apiURL = "https://jsonplaceholder.typicode.com/posts";
 
 class App extends Component {
   state = {
-    posts: []
+    posts: [],
   };
-  
-  async componentDidMount(){
-     const {data:posts} = await axios.get(apiURL);
-     this.setState({posts});
+
+  async componentDidMount() {
+    const { data: posts } = await axios.get(apiURL);
+    this.setState({ posts });
   }
 
   handleAdd = async () => {
-    const obj = {title:"a",body:"b"};
-    const {data:post} = await axios.post(apiURL,obj);
+    const obj = { title: "a", body: "b" };
+    const { data: post } = await axios.post(apiURL, obj);
 
-    const posts=[post,...this.state.posts];
-    this.setState({posts});
+    const posts = [post, ...this.state.posts];
+    this.setState({ posts });
   };
 
-  handleUpdate = async post => {
+  handleUpdate = async (post) => {
     post.title = "UPDATED!";
     await axios.put(`${apiURL}/${post.id}`, post);
-    
+
     const posts = [...this.state.posts];
     const index = posts.indexOf(post);
-    posts[index] = {...post};
-    this.setState({posts});
+    posts[index] = { ...post };
+    this.setState({ posts });
   };
 
-  handleDelete = async post => {
-    await axios.delete(`${apiURL}/${post.id}`);
+  handleDelete = async (post) => {
+    const orignalPosts = this.state.posts;
 
-    const posts = this.state.posts.filter(p=>p.id!==post.id);
-    this.setState({posts});
+    const posts = this.state.posts.filter((p) => p.id !== post.id);
+    this.setState({ posts });
+
+    try {
+      await axios.delete(`${apiURL}/${post.id}`);
+      throw new Error("errors for test");
+    } catch (e) {
+      alert("errors happened!" + e);
+      this.setState({ posts: orignalPosts });
+    }
   };
 
   render() {
@@ -54,7 +62,7 @@ class App extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.posts.map(post => (
+            {this.state.posts.map((post) => (
               <tr key={post.id}>
                 <td>{post.title}</td>
                 <td>
