@@ -1,4 +1,6 @@
 import axios from "axios";
+import { toast } from "react-toastify";
+import logger from "./logServices";
 
 axios.interceptors.response.use(null, (error) => {
   const clientSideError =
@@ -6,8 +8,8 @@ axios.interceptors.response.use(null, (error) => {
     error.response.status >= 400 &&
     error.response.status < 500;
   if (!clientSideError) {
-    console.log("Unexpected errors:" + error);
-    alert("an unexpected error happened!");
+    logger.log(error);
+    toast.error("an unexpected error happened!");
   }
   return Promise.reject(error);
 });
